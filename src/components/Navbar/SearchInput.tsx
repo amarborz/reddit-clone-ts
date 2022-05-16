@@ -1,9 +1,7 @@
 import { SearchIcon } from '@chakra-ui/icons'
 import { Flex, Input, InputGroup, InputLeftElement } from '@chakra-ui/react'
 
-type SearchInputProps = {}
-
-const SearchInput: React.FC<SearchInputProps> = () => {
+const SearchInput: React.FC = () => {
 	return (
 		<Flex flexGrow={1} align="center" mr="2">
 			<InputGroup>

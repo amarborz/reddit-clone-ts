@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Button, Flex, Input, Text } from '@chakra-ui/react'
 import { useSetRecoilState } from 'recoil'
 import { authModalState } from '../../../atoms/authModalAtoms'
+import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
+import { auth } from '../../../firebase/clientApp'
+import { FIREBASE_ERRORS } from '../../../firebase/errors'
 
 const Login: React.FC = () => {
 	const setAuthModalState = useSetRecoilState(authModalState)
@@ -11,6 +14,9 @@ const Login: React.FC = () => {
 		password: '',
 	})
 
+	const [signInWithEmailAndPassword, user, loading, error] =
+		useSignInWithEmailAndPassword(auth)
+
 	const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setLoginForm((prev) => ({
 			...prev,
@@ -18,7 +24,10 @@ const Login: React.FC = () => {
 		}))
 	}
 
-	const submitHandler = () => {}
+	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		signInWithEmailAndPassword(loginForm.email, loginForm.password)
+	}
 
 	return (
 		<form onSubmit={submitHandler}>
@@ -58,9 +67,32 @@ const Login: React.FC = () => {
 				}}
 				bg="gray.50"
 			/>
-			<Button type="submit" mb="2" mt="2" width="100%" height="36px">
+			<Text textAlign="center" color="red" fontSize="10pt">
+				{FIREBASE_ERRORS[error?.message as keyof typeof FIREBASE_ERRORS]}
+			</Text>
+			<Button
+				type="submit"
+				mb="2"
+				mt="2"
+				width="100%"
+				height="36px"
+				isLoading={loading}
+			>
 				Log In
 			</Button>
+			<Flex fontSize="10pt" justifyContent="center" mb="2">
+				<Text mr="1">Forgot your password?</Text>
+				<Text
+					fontWeight="700"
+					cursor="pointer"
+					color="blue.500"
+					onClick={() =>
+						setAuthModalState((prev) => ({ ...prev, view: 'resetPassword' }))
+					}
+				>
+					RESET
+				</Text>
+			</Flex>
 			<Flex fontSize="10pt" justifyContent="center">
 				<Text mr="1">New here?</Text>
 				<Text
